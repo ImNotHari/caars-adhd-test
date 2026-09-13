@@ -1,0 +1,9 @@
+.git
+.agents
+AGENTS.md
+node_modules
+tests
+logic.md
+report.md
+requirement.md
+*.py

@@ -1,3 +1,0 @@
-"""
-CAARS Desktop GUI Package.
-"""
