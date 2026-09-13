@@ -69,6 +69,34 @@ def run_cli_demo():
     for s in result["scores"]:
         print(f"   {s['scale_code']:<6} {s['scale_name']:<35} {s['raw_score']:<6} {s['t_score']:<9} {s['percentile']:<12.1f} {s['classification']}")
 
+    # Save assessment and generate sample PDF report
+    from caars.reporting.pdf_builder import PDFReportBuilder
+    from pathlib import Path
+
+    ass_id = db.create_assessment(
+        patient_id=p_id,
+        form_type="self",
+        rater_name="Alex Taylor",
+        administered_date=str(date.today()),
+        relationship="Self"
+    )
+    db.save_responses(ass_id, sample_responses)
+    db.save_scores(
+        assessment_id=ass_id,
+        inconsistency_score=result["inconsistency_score"],
+        inconsistency_flag=result["inconsistency_flag"],
+        scores=result["scores"]
+    )
+
+    assessment_record = db.get_assessment(ass_id)
+    export_dir = Path("exports")
+    export_dir.mkdir(exist_ok=True)
+    pdf_path = export_dir / f"CAARS_Report_{mrn}_{date.today()}.pdf"
+
+    pdf_builder = PDFReportBuilder()
+    generated_pdf = pdf_builder.generate_report(assessment_record, pdf_path)
+    print(f"\n4. Clinical PDF Report successfully compiled:")
+    print(f"   --> {generated_pdf}")
     print("=" * 60)
 
 def main():

@@ -1,14 +1,18 @@
 """
 Clinical Results & Psychometric Profile Viewer.
 Renders demographic summary, validity indicators, embedded T-score chart,
-and full subscale breakdown table.
+full subscale breakdown table, and 1-click clinical PDF export.
 """
 
+import os
+import sys
 from typing import Callable, Optional, List, Dict, Any
+from tkinter import filedialog, messagebox
 import customtkinter as ctk
 
 from caars.database.db import DatabaseManager
 from caars.gui.components.chart_canvas import TScoreChart
+from caars.reporting.pdf_builder import PDFReportBuilder
 
 CLASSIFICATION_COLORS = {
     "Very Elevated": ("#ef4444", "#991b1b"),
@@ -26,6 +30,7 @@ class ReportView(ctk.CTkFrame):
         self.db = db
         self.assessment_id = assessment_id
         self.on_back = on_back
+        self.pdf_builder = PDFReportBuilder()
 
         self.assessment = self.db.get_assessment(assessment_id)
         if not self.assessment:
@@ -72,19 +77,35 @@ class ReportView(ctk.CTkFrame):
         )
         title_lbl.grid(row=0, column=1, padx=10, pady=10, sticky="w")
 
-        form_label = "Self-Report (CAARS-S:L)" if self.assessment["form_type"] == "self" else f"Observer Report ({self.assessment['relationship'] or 'Other'})"
-        meta_lbl = ctk.CTkLabel(
-            header,
-            text=f"MRN: {self.assessment['mrn']} | {form_label} | Date: {self.assessment['administered_date']}",
-            font=ctk.CTkFont(size=12),
-            text_color="gray"
+        # Right side: Export PDF & Metadata
+        actions_frame = ctk.CTkFrame(header, fg_color="transparent")
+        actions_frame.grid(row=0, column=2, padx=12, pady=10, sticky="e")
+
+        export_btn = ctk.CTkButton(
+            actions_frame,
+            text="📄 Export PDF Report",
+            fg_color="#10b981",
+            hover_color="#047857",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            height=32,
+            command=self.export_pdf
         )
-        meta_lbl.grid(row=0, column=2, padx=14, pady=10, sticky="e")
+        export_btn.pack(side="right")
 
     def _build_body(self):
         scroll = ctk.CTkScrollableFrame(self, corner_radius=8)
         scroll.grid(row=1, column=0, sticky="nsew", padx=14, pady=(4, 12))
         scroll.grid_columnconfigure(0, weight=1)
+
+        # Meta Card
+        meta_card = ctk.CTkFrame(scroll, fg_color=("gray90", "gray20"), corner_radius=6)
+        meta_card.pack(fill="x", pady=(0, 6), padx=4)
+        form_label = "Self-Report (CAARS-S:L)" if self.assessment["form_type"] == "self" else f"Observer Report ({self.assessment['relationship'] or 'Other'})"
+        meta_text = (
+            f"MRN: {self.assessment['mrn']}  |  Form: {form_label}  |  "
+            f"Rater: {self.assessment['rater_name']}  |  Administered: {self.assessment['administered_date']}"
+        )
+        ctk.CTkLabel(meta_card, text=meta_text, font=ctk.CTkFont(size=12)).pack(anchor="w", padx=12, pady=8)
 
         # 1. Validity Indicator Card
         self._build_validity_banner(scroll)
@@ -128,7 +149,7 @@ class ReportView(ctk.CTkFrame):
         banner.pack(fill="x", pady=6, padx=4)
 
         icon = "⚠️" if flag else "✓"
-        title = "INCONSISTENCY ALERT: Invalid Protocol Suspected" if flag else "PROTOCOL VALIDITY: Acceptable Response Consistency"
+        title = "INCONSISTENCY ALERT: Potential Response Distortion" if flag else "PROTOCOL VALIDITY: Acceptable Internal Consistency"
         body = (
             f"Inconsistency Index score is {score} (Cutoff ≥ 8). High discordance between similar question pairs. "
             "Interpret clinical elevations with caution."
@@ -187,17 +208,12 @@ class ReportView(ctk.CTkFrame):
             row_frame.grid(row=row_idx, column=0, columnspan=len(headers), sticky="ew", pady=1)
             row_frame.grid_columnconfigure(1, weight=1)
 
-            # Code
             ctk.CTkLabel(row_frame, text=s["scale_code"], font=ctk.CTkFont(size=12, weight="bold"), width=50, anchor="w").grid(row=0, column=0, padx=4, pady=6)
-            # Name
             ctk.CTkLabel(row_frame, text=s["scale_name"], font=ctk.CTkFont(size=12), width=280, anchor="w").grid(row=0, column=1, padx=4, pady=6, sticky="w")
-            # Raw
             ctk.CTkLabel(row_frame, text=str(s["raw_score"]), font=ctk.CTkFont(size=12), width=60, anchor="center").grid(row=0, column=2, padx=4, pady=6)
-            # T-Score
             ctk.CTkLabel(row_frame, text=str(s["t_score"]), font=ctk.CTkFont(size=12, weight="bold"), width=75, anchor="center").grid(row=0, column=3, padx=4, pady=6)
-            # Percentile
             ctk.CTkLabel(row_frame, text=f"{s['percentile']:.1f}%", font=ctk.CTkFont(size=12), width=85, anchor="center").grid(row=0, column=4, padx=4, pady=6)
-            # Badge
+
             badge_colors = CLASSIFICATION_COLORS.get(s["classification"], ("#64748b", "#334155"))
             badge = ctk.CTkLabel(
                 row_frame,
@@ -229,13 +245,11 @@ class ReportView(ctk.CTkFrame):
             text_color="gray"
         ).pack(anchor="w", padx=14, pady=(0, 8))
 
-        # Map other scores
         other_scores_map = {s["scale_code"]: s["t_score"] for s in self.other_assessment["scores"]}
 
         comp_frame = ctk.CTkFrame(card, fg_color="transparent")
         comp_frame.pack(fill="x", padx=12, pady=(0, 12))
 
-        # Header
         headers = ["Scale", "Self T", "Observer T", "Delta (Δ)", "Clinical Meaning"]
         for col, h in enumerate(headers):
             ctk.CTkLabel(comp_frame, text=h, font=ctk.CTkFont(size=11, weight="bold")).grid(row=0, column=col, padx=8, pady=4)
@@ -258,3 +272,37 @@ class ReportView(ctk.CTkFrame):
             ctk.CTkLabel(comp_frame, text=str(obs_t)).grid(row=row_idx, column=2, padx=8, pady=3)
             ctk.CTkLabel(comp_frame, text=f"{delta:+d}", font=ctk.CTkFont(weight="bold")).grid(row=row_idx, column=3, padx=8, pady=3)
             ctk.CTkLabel(comp_frame, text=meaning, text_color=color).grid(row=row_idx, column=4, padx=8, pady=3, sticky="w")
+
+    def export_pdf(self):
+        default_filename = f"CAARS_Report_{self.assessment['mrn']}_{self.assessment['administered_date']}.pdf"
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".pdf",
+            filetypes=[("PDF Documents", "*.pdf")],
+            initialfile=default_filename,
+            title="Save Clinical Evaluation Report PDF"
+        )
+
+        if not file_path:
+            return
+
+        try:
+            generated_path = self.pdf_builder.generate_report(
+                assessment=self.assessment,
+                output_pdf_path=file_path,
+                other_assessment=self.other_assessment
+            )
+
+            open_now = messagebox.askyesno(
+                "PDF Report Generated",
+                f"Clinical PDF report successfully exported to:\n{generated_path}\n\nWould you like to open it now?"
+            )
+            if open_now:
+                if sys.platform.startswith("win"):
+                    os.startfile(generated_path)
+                elif sys.platform.startswith("darwin"):
+                    os.system(f"open '{generated_path}'")
+                else:
+                    os.system(f"xdg-open '{generated_path}'")
+
+        except Exception as e:
+            messagebox.showerror("Export Failed", f"Failed to generate PDF report:\n{str(e)}")
