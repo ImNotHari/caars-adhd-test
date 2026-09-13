@@ -6,6 +6,9 @@
   <title>CAARS Adult ADHD Assessment & Scoring System</title>
   <meta name="description" content="Standardized Conners' Adult ADHD Rating Scales (CAARS) 66-item clinical administration, normative T-score scoring, and psychometric reporting tool. 100% offline and client-side.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Crect width='24' height='24' rx='6' fill='%23111417'/%3E%3Ccircle cx='12' cy='12' r='9' stroke='%235cfff7' stroke-opacity='0.35' stroke-width='1.2' stroke-dasharray='2 2'/%3E%3Cpath d='M12 2v20M2 12h20' stroke='%235cfff7' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='3.2' fill='%23111417' stroke='%235cfff7' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='1.4' fill='%235cfff7'/%3E%3Ccircle cx='12' cy='5.5' r='1.3' fill='%235cfff7'/%3E%3Ccircle cx='12' cy='18.5' r='1.3' fill='%235cfff7'/%3E%3Ccircle cx='5.5' cy='12' r='1.3' fill='%235cfff7'/%3E%3Ccircle cx='18.5' cy='12' r='1.3' fill='%235cfff7'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&family=Noto+Sans+Malayalam:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -41,10 +44,10 @@
             <span class="brand-name">CAARS</span>
             <span class="brand-badge">
               <span class="brand-badge-dot" aria-hidden="true"></span>
-              <span>Clinical Suite</span>
+              <span>Adult ADHD Test</span>
             </span>
           </div>
-          <div class="brand-subtitle">Adult ADHD Assessment Platform</div>
+          <div class="brand-subtitle">Adult ADHD Assessment &amp; Screening</div>
         </div>
       </div>
 
@@ -83,9 +86,9 @@
          ==================================================================== -->
     <section id="stage-setup" class="app-stage active" aria-labelledby="heading-setup">
       <div class="clinical-card">
-        <h1 id="heading-setup" class="hero-title">Conners' Adult ADHD Rating Scales (CAARS)</h1>
+        <h1 id="heading-setup" class="hero-title">Before You Begin</h1>
         <p class="hero-subtitle">
-          Administer the standardized 66-item CAARS protocol, compute age- and gender-stratified normative T-scores, evaluate Inconsistency Index protocol validity, and review psychometric symptom profiles.
+          A 66-question standardized assessment designed to evaluate symptoms of adult ADHD.
         </p>
 
         <!-- Setup Form -->
@@ -93,15 +96,15 @@
           <div class="setup-form-grid">
             
             <div class="form-group">
-              <label for="select-form-type" id="label-form-type" class="form-label">Assessment Form Protocol *</label>
+              <label for="select-form-type" id="label-form-type" class="form-label">Who is this assessment for? <span class="required-star">*</span></label>
               <select id="select-form-type" class="form-select" required>
-                <option value="CAARS-S:L" id="opt-form-self" selected>CAARS-S:L (Self-Report, Long Form — 66 Items)</option>
-                <option value="CAARS-O:L" id="opt-form-observer">CAARS-O:L (Observer Report, Long Form — 66 Items)</option>
+                <option value="CAARS-S:L" id="opt-form-self" selected>For myself (Self-Report — 66 Questions)</option>
+                <option value="CAARS-O:L" id="opt-form-observer">For someone else (Observer-Report — 66 Questions)</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="select-gender" id="label-gender" class="form-label">Biological Gender (Normative Group) *</label>
+              <label for="select-gender" id="label-gender" class="form-label">Gender <span class="required-star">*</span></label>
               <select id="select-gender" class="form-select" required>
                 <option value="Male" id="opt-gender-male" selected>Male</option>
                 <option value="Female" id="opt-gender-female">Female</option>
@@ -109,7 +112,7 @@
             </div>
 
             <div class="form-group">
-              <label for="select-age-bracket" id="label-age-bracket" class="form-label">Age Cohort (Normative Group) *</label>
+              <label for="select-age-bracket" id="label-age-bracket" class="form-label">Age Bracket <span class="required-star">*</span></label>
               <select id="select-age-bracket" class="form-select" required>
                 <option value="18-29" id="opt-age-18-29" selected>18–29 Years</option>
                 <option value="30-49" id="opt-age-30-49">30–49 Years</option>
@@ -118,8 +121,8 @@
             </div>
 
             <div class="form-group">
-              <label for="input-rater-label" id="label-rater" class="form-label">Respondent / Rater Identifier (Optional)</label>
-              <input type="text" id="input-rater-label" class="form-input" placeholder="e.g. Self, Spouse, Colleague" maxlength="40">
+              <label for="input-rater-label" id="label-rater" class="form-label">Name or relationship (Optional)</label>
+              <input type="text" id="input-rater-label" class="form-input" placeholder="e.g. Self, Partner, Parent, Friend" maxlength="40">
             </div>
 
           </div>
@@ -127,27 +130,27 @@
           <!-- Likert Scale Instructions -->
           <div class="info-callout" role="region" aria-label="Rating Scale Guide">
             <div class="callout-title">
-              <span id="likert-guide-title">Standard 4-Point Likert Rating Guide</span>
+              <span id="likert-guide-title">How to Rate Your Answers</span>
             </div>
             <p id="likert-guide-desc" class="likert-guide-desc" style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.75rem;">
-              Read each item carefully and indicate how often you (or the person you are rating) experience the described behavior in daily life:
+              Read each question and choose how often this happens in daily life:
             </p>
             <div class="likert-legend-grid">
               <div class="legend-item" id="legend-item-0">
                 <span class="legend-badge">0</span>
-                <span class="legend-text" id="legend-text-0"><strong>Not at all, never</strong> (Rarely or never occurs)</span>
+                <span class="legend-text" id="legend-text-0"><strong>Not at all</strong> (Never or very rarely occurs)</span>
               </div>
               <div class="legend-item" id="legend-item-1">
                 <span class="legend-badge">1</span>
-                <span class="legend-text" id="legend-text-1"><strong>Just a little</strong> (Once in a while)</span>
+                <span class="legend-text" id="legend-text-1"><strong>Just a little</strong> (Occurs once in a while)</span>
               </div>
               <div class="legend-item" id="legend-item-2">
                 <span class="legend-badge">2</span>
-                <span class="legend-text" id="legend-text-2"><strong>Pretty much</strong> (Often, quite a bit)</span>
+                <span class="legend-text" id="legend-text-2"><strong>Pretty often</strong> (Occurs frequently)</span>
               </div>
               <div class="legend-item" id="legend-item-3">
                 <span class="legend-badge">3</span>
-                <span class="legend-text" id="legend-text-3"><strong>Very much</strong> (Very frequently)</span>
+                <span class="legend-text" id="legend-text-3"><strong>Very much</strong> (Occurs almost all the time)</span>
               </div>
             </div>
           </div>
@@ -155,7 +158,7 @@
           <!-- Action Bar -->
           <div style="display: flex; justify-content: flex-end;">
             <button type="button" id="btn-start-survey" class="btn btn-primary">
-              <span>Begin Questionnaire</span>
+              <span>Start Questions</span>
               <span aria-hidden="true">&rarr;</span>
             </button>
           </div>
@@ -177,17 +180,15 @@
           <div class="survey-top-actions">
             <nav class="pagination-bar" id="survey-pagination-bar" aria-label="Section page navigation"></nav>
             <span id="label-answered-count" style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary-text);">0 / 66 Answered</span>
-            <button type="button" id="btn-survey-prev-top" class="btn btn-outline btn-sm" disabled>
-              <span aria-hidden="true">&larr;</span>
-              <span>Prev</span>
+            <button type="button" id="btn-survey-prev-top" class="btn btn-outline btn-sm nav-arrow-btn" aria-label="Previous" title="Previous" disabled>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             </button>
-            <button type="button" id="btn-survey-next-top" class="btn btn-primary btn-sm">
-              <span>Next Section</span>
-              <span aria-hidden="true">&rarr;</span>
+            <button type="button" id="btn-survey-next-top" class="btn btn-primary btn-sm nav-arrow-btn" aria-label="Next" title="Next">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </button>
-            <button type="button" id="btn-survey-review-top" class="btn btn-success btn-sm" style="display: none;">
-              <span>Review &amp; Validate</span>
-              <span aria-hidden="true">&rarr;</span>
+            <button type="button" id="btn-survey-review-top" class="btn btn-success btn-sm" style="display: none;" aria-label="Review Answers">
+              <span>Review</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </button>
           </div>
         </div>
@@ -204,22 +205,20 @@
 
       <!-- Section Navigation Footer -->
       <div class="nav-footer">
-        <button type="button" id="btn-survey-prev" class="btn btn-outline" disabled>
-          <span aria-hidden="true">&larr;</span>
-          <span>Previous Section</span>
+        <button type="button" id="btn-survey-prev" class="btn btn-outline nav-arrow-btn" aria-label="Previous" title="Previous" disabled>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
         </button>
 
-        <nav class="pagination-bar" id="survey-pagination-bar-bottom" aria-label="Section page navigation bottom"></nav>
+        <div id="survey-question-range" class="survey-range-badge" aria-live="polite">Questions 1–10 of 66</div>
 
-        <div style="display: flex; align-items: center; gap: 0.65rem;">
-          <button type="button" id="btn-survey-next" class="btn btn-primary">
-            <span>Next Section</span>
-            <span aria-hidden="true">&rarr;</span>
+        <div class="nav-footer-actions">
+          <button type="button" id="btn-survey-next" class="btn btn-primary nav-arrow-btn" aria-label="Next" title="Next">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
 
-          <button type="button" id="btn-survey-review" class="btn btn-success" style="display: none;">
-            <span>Review &amp; Validate</span>
-            <span aria-hidden="true">&rarr;</span>
+          <button type="button" id="btn-survey-review" class="btn btn-success" style="display: none;" aria-label="Review Answers">
+            <span>Review Answers</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </button>
         </div>
       </div>
@@ -240,10 +239,10 @@
         <!-- Unanswered Alert (Shown if items missing) -->
         <div id="missing-alert-box" class="missing-warning-box" style="display: none;" role="alert">
           <div class="missing-title">
-            <span id="missing-title-text">Protocol Incomplete</span>
+            <span id="missing-title-text">Unanswered Questions Remaining</span>
           </div>
           <p class="missing-desc" id="missing-desc-text">
-            There are unanswered questions remaining. Click any item number below to jump directly to that question and complete it:
+            To calculate accurate results, all 66 questions must be answered. Click any question number below to fill it in:
           </p>
           <div class="missing-grid" id="missing-items-grid">
             <!-- Jump buttons rendered dynamically -->
@@ -253,10 +252,10 @@
         <!-- All Complete Notice (Shown if 100% complete) -->
         <div id="complete-notice-box" class="info-callout" style="display: none; background-color: var(--color-success-subtle); border-color: var(--color-success);">
           <div class="callout-title" style="color: var(--color-success-text);">
-            <span>All 66 Items Successfully Completed</span>
+            <span>All 66 Questions Answered!</span>
           </div>
           <p style="font-size: 0.85rem; color: var(--color-success-text);">
-            All responses are present. Click the button below to compute subscale totals, Inconsistency Index protocol validity, and standardized normative T-scores.
+            All questions are complete. Click below to calculate your standardized scores and view your report.
           </p>
         </div>
 
@@ -264,11 +263,11 @@
         <div class="nav-footer" style="margin-top: 1.5rem; padding: 0; border: none; background: transparent;">
           <button type="button" id="btn-review-back" class="btn btn-outline">
             <span aria-hidden="true">&larr;</span>
-            <span>Return to Questions</span>
+            <span>Back to Questions</span>
           </button>
 
           <button type="button" id="btn-calculate-scores" class="btn btn-success" disabled>
-            <span>Compute Scores &amp; View Report</span>
+            <span>View Results</span>
           </button>
         </div>
       </div>
@@ -286,7 +285,7 @@
         <div class="report-header">
           <div>
             <h2 id="heading-results" style="font-size: 1.5rem; font-weight: 800; color: var(--color-text-main); margin-bottom: 0.25rem;">
-              CAARS Clinical Assessment Report
+              CAARS Assessment Report
             </h2>
             <p style="font-size: 0.85rem; color: var(--color-text-secondary);" id="report-timestamp-line">
               Administered: September 13, 2026 • Standalone Offline Engine v2.0.0
@@ -339,10 +338,10 @@
                 <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
                 <rect x="6" y="14" width="12" height="8"></rect>
               </svg>
-              <span>Print / PDF Report</span>
+              <span>Print / Save as PDF</span>
             </button>
             <button type="button" id="btn-start-new" class="btn btn-outline" title="Clear current responses and start a new assessment">
-              <span>Start New Assessment</span>
+              <span>Start Over</span>
             </button>
           </div>
         </div>
@@ -350,27 +349,27 @@
         <!-- Metadata Summary Box -->
         <div class="report-meta-grid">
           <div class="meta-item">
-            <span class="meta-label">Protocol Form</span>
+            <span class="meta-label">Assessment Type</span>
             <span class="meta-value" id="res-form-type">CAARS-S:L (Self-Report)</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Normative Group</span>
+            <span class="meta-label">Norm Group</span>
             <span class="meta-value" id="res-norm-group">Male • Age 18–29</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Rater Identifier</span>
+            <span class="meta-label">Rated By</span>
             <span class="meta-value" id="res-rater-label">Self</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Protocol Status</span>
-            <span class="meta-value" style="color: var(--color-success); font-weight: 700;" id="res-protocol-status">Complete &amp; Scored</span>
+            <span class="meta-label">Status</span>
+            <span class="meta-value" style="color: var(--color-success); font-weight: 700;" id="res-protocol-status">Complete</span>
           </div>
         </div>
 
         <!-- Large Hero Summary Scores (Published First) -->
         <div class="hero-scores-section" style="margin-bottom: 2rem;">
-          <div class="table-title">Primary Clinical Diagnostic Scores</div>
-          <div class="table-subtitle">Core symptom indicators and standardized normative standard T-scores (Mean = 50, SD = 10).</div>
+          <div class="table-title">Key Clinical Findings</div>
+          <div class="table-subtitle">Primary symptom scales and standardized normative T-scores (Average score = 50).</div>
           <div class="hero-scores-grid" id="hero-scores-grid">
             <!-- Large Score Cards injected dynamically by app.js -->
           </div>
@@ -378,18 +377,18 @@
 
         <!-- Comprehensive Subscale Breakdown Table -->
         <div class="table-card" style="margin-bottom: 2rem;">
-          <div class="table-title">Complete Standardized Subscale Findings</div>
-          <div class="table-subtitle">All 8 diagnostic and symptom dimensions (T-Score ≥ 65 denotes clinically significant elevation).</div>
+          <div class="table-title">Detailed Subscale Scores</div>
+          <div class="table-subtitle">All 8 symptom dimensions (T-score of 65 or higher indicates clinically elevated symptoms).</div>
           
           <div class="table-responsive">
             <table class="caars-table" aria-label="Subscale Score Findings Table">
               <thead>
                 <tr>
-                  <th scope="col" style="width: 55px;">Scale</th>
-                  <th scope="col">Subscale Description</th>
-                  <th scope="col" style="text-align: center; width: 100px;">Raw Score</th>
-                  <th scope="col" style="text-align: center; width: 120px;">Standard T</th>
-                  <th scope="col" style="text-align: center; width: 180px;">Classification</th>
+                  <th scope="col" style="width: 55px;">Code</th>
+                  <th scope="col">Symptom Area</th>
+                  <th scope="col" style="text-align: center; width: 100px;">Points</th>
+                  <th scope="col" style="text-align: center; width: 120px;">T-Score</th>
+                  <th scope="col" style="text-align: center; width: 180px;">Severity</th>
                 </tr>
               </thead>
               <tbody id="subscale-table-body">
@@ -403,20 +402,20 @@
         <div id="validity-banner-card" class="validity-banner valid" role="region" aria-label="Protocol Validity Analysis">
           <div class="validity-title">
             <span id="validity-icon" class="status-indicator-dot" aria-hidden="true"></span>
-            <span id="validity-title-text">PROTOCOL VALIDITY: Acceptable Internal Consistency</span>
+            <span id="validity-title-text">Consistent &amp; Reliable Answers</span>
           </div>
           <p class="validity-desc" id="validity-desc-text">
-            Inconsistency Index score is 2 (Cutoff ≥ 8). Responses across congruent paired items reflect consistent, reliable reporting.
+            Answers across similar questions are consistent. This assessment protocol is reliable.
           </p>
         </div>
 
         <!-- Medical Non-Diagnostic Disclaimer -->
         <div class="medical-disclaimer-card" role="note">
           <div class="disclaimer-title">
-            <span>Medical &amp; Psychometric Notice</span>
+            <span>Important Medical Disclaimer</span>
           </div>
           <p class="disclaimer-text">
-            The Conners' Adult ADHD Rating Scales (CAARS) is a standardized psychometric instrument designed to quantify the frequency and severity of behavioral symptoms associated with adult ADHD. A high score or clinical elevation (T &ge; 65) indicates clinically significant symptoms compared to the normative population, but <strong>does NOT alone establish a medical or psychiatric diagnosis of ADHD</strong>. Formal diagnosis requires a comprehensive clinical evaluation by a licensed healthcare professional in accordance with DSM-5 diagnostic criteria, incorporating developmental history, functional impairment, and ruling out differential medical or psychiatric conditions.
+            The Conners' Adult ADHD Rating Scales (CAARS) is a screening tool designed to assess behavioral symptoms of adult ADHD. An elevated score (T &ge; 65) indicates higher-than-average symptoms, but <strong>does not establish a medical or psychiatric diagnosis on its own</strong>. A formal diagnosis requires a comprehensive clinical evaluation by a licensed healthcare professional, psychiatrist, or clinical psychologist.
           </p>
         </div>
 
@@ -428,14 +427,14 @@
   <!-- Start New Assessment Confirmation Modal -->
   <div id="modal-confirm-reset" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-reset-title">
     <div class="modal-dialog">
-      <h3 id="modal-reset-title" class="modal-title">Clear &amp; Start New Assessment?</h3>
+      <h3 id="modal-reset-title" class="modal-title">Start a New Assessment?</h3>
       <p class="modal-desc">
-        Starting a new assessment will immediately clear all current responses and calculations. Because this application operates strictly in volatile offline memory, this action cannot be undone.
+        Starting over will immediately clear all current answers and scores. Since this tool runs entirely in offline memory, this cannot be undone.
       </p>
       <div class="modal-actions">
-        <button type="button" id="btn-modal-cancel" class="btn btn-outline">Cancel</button>
+        <button type="button" id="btn-modal-cancel" class="btn btn-outline">Go Back</button>
         <button type="button" id="btn-modal-confirm" class="btn btn-primary" style="background-color: var(--color-danger); border-color: var(--color-danger);">
-          Clear &amp; Start Over
+          Yes, Start Over
         </button>
       </div>
     </div>

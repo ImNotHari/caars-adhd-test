@@ -163,6 +163,13 @@
     const isMl = lang === 'ml';
     const t = (k, p) => window.CAARS_I18N ? window.CAARS_I18N.t(k, p, lang) : k;
 
+    const updateBtnText = (btn, textKey) => {
+      if (!btn) return;
+      const span = btn.querySelector('span');
+      if (span) span.textContent = t(textKey);
+      else btn.textContent = t(textKey);
+    };
+
     // Stage 1 Setup Text
     const headingSetup = document.getElementById('heading-setup');
     if (headingSetup) headingSetup.textContent = t('setup_title');
@@ -171,9 +178,7 @@
     if (heroSub) heroSub.textContent = t('setup_subtitle');
 
     if (elements.btnStartSurvey) {
-      const btnSpan = elements.btnStartSurvey.querySelector('span:first-child');
-      if (btnSpan) btnSpan.textContent = t('btn_start_survey');
-      else elements.btnStartSurvey.textContent = t('btn_start_survey');
+      updateBtnText(elements.btnStartSurvey, 'btn_start_survey');
     }
 
     // Form labels and dropdown options
@@ -234,20 +239,31 @@
       });
     }
 
-    // Stage 2 Buttons
-    const updateBtnText = (btn, textKey) => {
-      if (!btn) return;
-      const span = btn.querySelector('span');
-      if (span) span.textContent = t(textKey);
-      else btn.textContent = t(textKey);
-    };
-
-    updateBtnText(elements.btnSurveyPrev, 'btn_prev');
-    updateBtnText(elements.btnSurveyPrevTop, 'btn_prev');
-    updateBtnText(elements.btnSurveyNext, 'btn_next');
-    updateBtnText(elements.btnSurveyNextTop, 'btn_next');
-    updateBtnText(elements.btnSurveyReview, 'btn_review');
-    updateBtnText(elements.btnSurveyReviewTop, 'btn_review');
+    // Stage 2 Buttons (Arrow navigation)
+    if (elements.btnSurveyPrev) {
+      elements.btnSurveyPrev.setAttribute('aria-label', t('btn_prev'));
+      elements.btnSurveyPrev.setAttribute('title', t('btn_prev'));
+    }
+    if (elements.btnSurveyPrevTop) {
+      elements.btnSurveyPrevTop.setAttribute('aria-label', t('btn_prev'));
+      elements.btnSurveyPrevTop.setAttribute('title', t('btn_prev'));
+    }
+    if (elements.btnSurveyNext) {
+      elements.btnSurveyNext.setAttribute('aria-label', t('btn_next'));
+      elements.btnSurveyNext.setAttribute('title', t('btn_next'));
+    }
+    if (elements.btnSurveyNextTop) {
+      elements.btnSurveyNextTop.setAttribute('aria-label', t('btn_next'));
+      elements.btnSurveyNextTop.setAttribute('title', t('btn_next'));
+    }
+    if (elements.btnSurveyReview) {
+      const sp = elements.btnSurveyReview.querySelector('span');
+      if (sp) sp.textContent = t('btn_review');
+    }
+    if (elements.btnSurveyReviewTop) {
+      const sp = elements.btnSurveyReviewTop.querySelector('span');
+      if (sp) sp.textContent = t('btn_review');
+    }
 
     // Stage 3 Review UI
     const headingReview = document.getElementById('heading-review');
@@ -306,13 +322,13 @@
     if (thClass) thClass.textContent = t('th_classification');
 
     const disclaimerTitle = document.querySelector('.medical-disclaimer-card .disclaimer-title span');
-    if (disclaimerTitle) disclaimerTitle.textContent = isMl ? 'പ്രത്യേകം ശ്രദ്ധിക്കുക (Medical Disclaimer)' : 'Medical & Psychometric Notice';
+    if (disclaimerTitle) disclaimerTitle.textContent = isMl ? 'പ്രത്യേകം ശ്രദ്ധിക്കുക (Medical Disclaimer)' : 'Important Medical Disclaimer';
 
     const disclaimerText = document.querySelector('.medical-disclaimer-card .disclaimer-text');
     if (disclaimerText) {
       disclaimerText.innerHTML = isMl
         ? `മുതിർന്നവരിലെ ശ്രദ്ധക്കുറവും അമിത ചലനാത്മകതയും അളക്കാനുള്ള ഒരു ശാസ്ത്രീയ ചോദ്യാവലിയാണ് CAARS. ഇതിൽ ഉയർന്ന സ്കോർ (T &ge; 65) ലഭിക്കുന്നത് ലക്ഷണങ്ങൾ കൂടുതലാണെന്നതിന്റെ സൂചനയാണെങ്കിലും, <strong>ഇതുകൊണ്ട് മാത്രം ഒരാൾക്ക് ADHD ഉണ്ടെന്ന് ഉറപ്പിക്കാനാവില്ല</strong>. കൃത്യമായ രോഗനിർണ്ണയത്തിനായി ഒരു ഡോക്ടറെയോ ക്ലിനിക്കൽ സൈക്കോളജിസ്റ്റിനെയോ നേരിട്ട് കണ്ട് വിശദമായി സംസാരിക്കേണ്ടതാണ്.`
-        : `The Conners' Adult ADHD Rating Scales (CAARS) is a standardized psychometric instrument designed to quantify the frequency and severity of behavioral symptoms associated with adult ADHD. A high score or clinical elevation (T &ge; 65) indicates clinically significant symptoms compared to the normative population, but <strong>does NOT alone establish a medical or psychiatric diagnosis of ADHD</strong>. Formal diagnosis requires a comprehensive clinical evaluation by a licensed healthcare professional in accordance with DSM-5 diagnostic criteria, incorporating developmental history, functional impairment, and ruling out differential medical or psychiatric conditions.`;
+        : `The Conners' Adult ADHD Rating Scales (CAARS) is a screening tool designed to assess behavioral symptoms of adult ADHD. An elevated score (T &ge; 65) indicates higher-than-average symptoms, but <strong>does not establish a medical or psychiatric diagnosis on its own</strong>. A formal diagnosis requires a comprehensive clinical evaluation by a licensed healthcare professional, psychiatrist, or clinical psychologist.`;
     }
 
     const modalTitle = document.getElementById('modal-reset-title');
@@ -403,7 +419,12 @@
 
       card.innerHTML = `
         <div class="card-top">
-          <div class="q-badge" aria-hidden="true">Q${String(q.id).padStart(2, '0')}</div>
+          <div class="q-header-meta">
+            <span class="q-badge" aria-hidden="true">Q${String(q.id).padStart(2, '0')}</span>
+            <span class="q-status-badge ${currentScore !== undefined ? 'visible' : ''}" aria-label="Answered" title="Answered">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+          </div>
           <div class="q-text" id="q-label-${q.id}">${qText}</div>
         </div>
         <div class="likert-group" role="radiogroup" aria-labelledby="q-label-${q.id}">
@@ -414,6 +435,9 @@
                 <input type="radio" name="q_${q.id}" value="${val}" ${isChecked ? 'checked' : ''} aria-label="Option ${val}: ${labels[val]}">
                 <span class="likert-score-num">${val}</span>
                 <span class="likert-score-desc">${labels[val]}</span>
+                <span class="likert-check-indicator" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </span>
               </label>
             `;
           }).join('')}
@@ -432,7 +456,18 @@
       elements.questionsList.appendChild(card);
     });
 
-    // Update section nav buttons
+    // Update range indicator badge
+    const rangeBadge = document.getElementById('survey-question-range');
+    if (rangeBadge) {
+      const startNum = startIdx + 1;
+      const endNum = endIdx;
+      const isMl = state.language === 'ml';
+      rangeBadge.textContent = isMl
+        ? `ചോദ്യങ്ങൾ ${startNum}–${endNum} / ${TOTAL_QUESTIONS}`
+        : `Questions ${startNum}–${endNum} of ${TOTAL_QUESTIONS}`;
+    }
+
+    // Update arrow nav buttons
     elements.btnSurveyPrev.disabled = state.currentSection === 0;
     if (elements.btnSurveyPrevTop) elements.btnSurveyPrevTop.disabled = state.currentSection === 0;
 
@@ -459,8 +494,8 @@
         const isActive = i === state.currentSection;
         btn.className = `page-btn ${isActive ? 'active' : ''}`;
         btn.textContent = String(i + 1);
-        btn.title = `Go to Section ${i + 1} (Items ${i * SECTION_SIZE + 1}–${Math.min((i + 1) * SECTION_SIZE, TOTAL_QUESTIONS)})`;
-        btn.setAttribute('aria-label', `Section ${i + 1}`);
+        btn.title = `Items ${i * SECTION_SIZE + 1}–${Math.min((i + 1) * SECTION_SIZE, TOTAL_QUESTIONS)}`;
+        btn.setAttribute('aria-label', `Page ${i + 1}`);
         if (isActive) {
           btn.setAttribute('aria-current', 'page');
         }
@@ -500,6 +535,10 @@
     if (card) {
       card.classList.add('answered');
       card.classList.remove('highlight-missing');
+      const statusBadge = card.querySelector('.q-status-badge');
+      if (statusBadge) {
+        statusBadge.classList.add('visible');
+      }
       card.querySelectorAll('.likert-btn-label').forEach(lbl => {
         const inp = lbl.querySelector('input');
         if (inp && parseInt(inp.value, 10) === score) {
@@ -508,6 +547,21 @@
           lbl.classList.remove('selected');
         }
       });
+
+      // Mobile ergonomic auto-advance: smoothly scrolls to the next question
+      if (window.innerWidth <= 768) {
+        setTimeout(() => {
+          const nextCard = card.nextElementSibling;
+          if (nextCard && nextCard.classList.contains('question-card')) {
+            nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            const footer = document.querySelector('.nav-footer');
+            if (footer) {
+              footer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }
+        }, 220);
+      }
     }
 
     updateProgressBar();
@@ -573,10 +627,10 @@
 
       elements.missingTitleText.textContent = isMl
         ? `${validation.missingCount} ചോദ്യങ്ങൾക്ക് ഉത്തരം നൽകാൻ ബാക്കിയുണ്ട്`
-        : `Protocol Incomplete: ${validation.missingCount} Unanswered Item${validation.missingCount > 1 ? 's' : ''}`;
+        : `${validation.missingCount} Unanswered Question${validation.missingCount > 1 ? 's' : ''} Remaining`;
       elements.missingDescText.textContent = isMl
         ? `റിപ്പോർട്ട് കൃത്യമാകാൻ എല്ലാ 66 ചോദ്യങ്ങൾക്കും ഉത്തരം നൽകേണ്ടതുണ്ട്. താഴെ കാണുന്ന നമ്പറുകളിൽ ക്ലിക്ക് ചെയ്ത് വിട്ടുപോയ ചോദ്യങ്ങൾക്ക് ഉത്തരം നൽകുക:`
-        : `Standard CAARS scoring requires all 66 items. Click any item number below to complete it:`;
+        : `To calculate accurate results, all 66 questions must be answered. Click any question number below to fill it in:`;
 
       elements.missingItemsGrid.innerHTML = '';
       validation.missingIds.forEach(id => {
@@ -594,11 +648,11 @@
       elements.btnCalculateScores.disabled = false;
 
       const compTitle = document.querySelector('#complete-notice-box .callout-title span');
-      if (compTitle) compTitle.textContent = isMl ? 'എല്ലാ ചോദ്യങ്ങൾക്കും ഉത്തരം നൽകിക്കഴിഞ്ഞു!' : 'PROTOCOL COMPLETE & READY FOR SCORING';
+      if (compTitle) compTitle.textContent = isMl ? 'എല്ലാ ചോദ്യങ്ങൾക്കും ഉത്തരം നൽകിക്കഴിഞ്ഞു!' : 'All 66 Questions Answered!';
       const compDesc = document.querySelector('#complete-notice-box p');
       if (compDesc) compDesc.textContent = isMl
         ? 'എല്ലാ 66 ചോദ്യങ്ങൾക്കും ഉത്തരങ്ങൾ ലഭിച്ചു. ഇനി നിങ്ങളുടെ പരിശോധനാ ഫലങ്ങളും റിപ്പോർട്ടും കാണാൻ താഴെയുള്ള ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.'
-        : 'All 66 psychometric items have been answered with valid responses. Proceed to execute the standardized scoring algorithm and generate the clinical diagnostic report.';
+        : 'All 66 questions are complete. Click below to calculate your standardized scores and view your report.';
     }
 
     showStage(elements.stageReview);
@@ -674,9 +728,11 @@
         : `ചോദ്യങ്ങൾക്ക് പരസ്പരം ഒത്തുപോകുന്ന വ്യക്തമായ ഉത്തരങ്ങളാണ് നൽകിയിട്ടുള്ളത്. ഈ റിപ്പോർട്ട് വിശ്വസനീയമാണ്.`;
     } else {
       elements.validityTitleText.textContent = isInc
-        ? `PROTOCOL VALIDITY ALERT: High Response Inconsistency (Score = ${result.inconsistency_score}, Cutoff ≥ 8)`
-        : `PROTOCOL VALIDITY: Acceptable Internal Consistency (Score = ${result.inconsistency_score}, Cutoff ≥ 8)`;
-      elements.validityDescText.textContent = result.inconsistency_warning;
+        ? `Attention: Response Inconsistency Detected (Score = ${result.inconsistency_score}, Cutoff ≥ 8)`
+        : `Consistent & Reliable Answers (Score = ${result.inconsistency_score}, Cutoff ≥ 8)`;
+      elements.validityDescText.textContent = isInc
+        ? `Similar questions received conflicting answers. Please interpret the scores with caution.`
+        : `Answers across similar questions are consistent. This assessment protocol is reliable.`;
     }
 
     // 3. Render Large Hero Summary Scores First
@@ -692,7 +748,7 @@
         const classifText = (isMl && window.CAARS_I18N)
           ? (window.CAARS_I18N.DICTIONARY.ml.classifications[s.classification_level] || s.classification)
           : s.classification;
-        const rawPrefix = isMl ? 'പോയിന്റ്:' : 'Raw Score:';
+        const rawPrefix = isMl ? 'പോയിന്റ്:' : 'Points:';
         const scalePrefix = isMl ? 'മേഖല' : 'Scale';
 
         const card = document.createElement('div');
@@ -913,6 +969,19 @@
     if (elements.btnSurveyNextTop) elements.btnSurveyNextTop.addEventListener('click', handleSurveyNext);
     if (elements.btnSurveyPrevTop) elements.btnSurveyPrevTop.addEventListener('click', handleSurveyPrev);
     if (elements.btnSurveyReviewTop) elements.btnSurveyReviewTop.addEventListener('click', handleSurveyReview);
+
+    // Keyboard Arrow Keys Navigation
+    window.addEventListener('keydown', (e) => {
+      if (elements.stageSurvey && elements.stageSurvey.classList.contains('active')) {
+        const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+        if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') return;
+        if (e.key === 'ArrowRight' && state.currentSection < TOTAL_SECTIONS - 1) {
+          handleSurveyNext();
+        } else if (e.key === 'ArrowLeft' && state.currentSection > 0) {
+          handleSurveyPrev();
+        }
+      }
+    });
 
     // Stage 3
     elements.btnReviewBack.addEventListener('click', () => showStage(elements.stageSurvey));
