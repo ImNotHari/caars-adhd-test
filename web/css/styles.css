@@ -353,7 +353,7 @@ body {
   box-shadow: 0 0 10px rgba(92, 255, 247, 0.45);
 }
 
-/* Malayalam Typography & Yellow Text System */
+/* Malayalam Typography & Questionnaire Question Yellow Accent */
 :lang(ml) {
   font-family: 'Noto Sans Malayalam', 'Manjari', 'Gayathri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -361,117 +361,12 @@ body {
 :lang(ml) .q-text {
   font-size: 1.05rem;
   line-height: 1.6;
+  color: var(--color-malayalam) !important;
 }
 
 :lang(ml) .likert-score-desc {
   font-size: 0.8rem;
   line-height: 1.35;
-}
-
-/* Make all Malayalam text appear yellow */
-:lang(ml) body,
-:lang(ml) h1,
-:lang(ml) h2,
-:lang(ml) h3,
-:lang(ml) h4,
-:lang(ml) .hero-title,
-:lang(ml) .hero-subtitle,
-:lang(ml) .q-text,
-:lang(ml) .likert-score-desc,
-:lang(ml) .likert-legend-grid span,
-:lang(ml) .legend-text,
-:lang(ml) .legend-item,
-:lang(ml) .legend-item strong,
-:lang(ml) .form-label,
-:lang(ml) .form-select,
-:lang(ml) .form-input,
-:lang(ml) .callout-title,
-:lang(ml) .callout-title span,
-:lang(ml) .info-callout p,
-:lang(ml) .likert-guide-desc,
-:lang(ml) .progress-count-text,
-:lang(ml) #label-answered-count,
-:lang(ml) #label-active-protocol,
-:lang(ml) .section-indicator,
-:lang(ml) #heading-review,
-:lang(ml) #review-subtitle,
-:lang(ml) .missing-title span,
-:lang(ml) .missing-desc,
-:lang(ml) .review-q-text,
-:lang(ml) #heading-results,
-:lang(ml) #report-timestamp-line,
-:lang(ml) .meta-label,
-:lang(ml) .meta-value,
-:lang(ml) .table-title,
-:lang(ml) .table-subtitle,
-:lang(ml) .hero-score-scale,
-:lang(ml) .hero-score-title,
-:lang(ml) .hero-score-raw,
-:lang(ml) .scale-desc-cell,
-:lang(ml) .caars-table th,
-:lang(ml) #validity-title-text,
-:lang(ml) #validity-desc-text,
-:lang(ml) .disclaimer-title span,
-:lang(ml) .disclaimer-text,
-:lang(ml) .modal-title,
-:lang(ml) .modal-desc,
-:lang(ml) .export-item-title,
-:lang(ml) .export-item-subtitle,
-:lang(ml) .brand-subtitle,
-:lang(ml) #offline-pill-text {
-  color: var(--color-malayalam) !important;
-}
-
-:lang(ml) strong,
-:lang(ml) b {
-  color: var(--color-malayalam-bright, var(--color-malayalam)) !important;
-}
-
-/* Header Malayalam Language Toggle Button */
-#btn-lang-ml {
-  color: var(--color-malayalam);
-  font-family: 'Noto Sans Malayalam', 'Manjari', sans-serif;
-}
-
-#btn-lang-ml.active {
-  background-color: var(--color-malayalam);
-  color: #000000 !important;
-  border-color: var(--color-malayalam);
-  box-shadow: 0 0 10px rgba(237, 195, 78, 0.45);
-}
-
-[data-theme="dark"] #btn-lang-ml.active {
-  background-color: var(--color-malayalam);
-  color: #000000 !important;
-  border-color: var(--color-malayalam);
-  box-shadow: 0 0 12px rgba(237, 195, 78, 0.5);
-}
-
-/* Likert legend badge and cards in Malayalam mode */
-:lang(ml) .legend-badge {
-  border-color: var(--color-malayalam);
-  color: var(--color-malayalam);
-}
-
-:lang(ml) .likert-btn-label.selected {
-  border-color: var(--color-malayalam);
-  background-color: var(--color-malayalam-bg);
-}
-
-:lang(ml) .likert-btn-label.selected .likert-score-num {
-  background-color: var(--color-malayalam);
-  color: #000000;
-}
-
-:lang(ml) .likert-btn-label.selected .likert-score-desc {
-  color: var(--color-malayalam) !important;
-  font-weight: 700;
-}
-
-/* Elements with explicit Malayalam styling */
-.ml-text,
-[data-lang="ml"] {
-  color: var(--color-malayalam) !important;
 }
 
 .header-actions {

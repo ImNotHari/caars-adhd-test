@@ -60,7 +60,6 @@
     btnSurveyPrevTop: document.getElementById('btn-survey-prev-top'),
     btnSurveyNextTop: document.getElementById('btn-survey-next-top'),
     btnSurveyReviewTop: document.getElementById('btn-survey-review-top'),
-    btnPrefillDemo: document.getElementById('btn-prefill-demo'),
 
     // Review Stage
     missingAlertBox: document.getElementById('missing-alert-box'),
@@ -249,7 +248,6 @@
     updateBtnText(elements.btnSurveyNextTop, 'btn_next');
     updateBtnText(elements.btnSurveyReview, 'btn_review');
     updateBtnText(elements.btnSurveyReviewTop, 'btn_review');
-    updateBtnText(elements.btnPrefillDemo, 'btn_prefill_demo');
 
     // Stage 3 Review UI
     const headingReview = document.getElementById('heading-review');
@@ -308,12 +306,12 @@
     if (thClass) thClass.textContent = t('th_classification');
 
     const disclaimerTitle = document.querySelector('.medical-disclaimer-card .disclaimer-title span');
-    if (disclaimerTitle) disclaimerTitle.textContent = isMl ? 'വൈദ്യശാസ്ത്ര & സൈക്കോമെട്രിക് മുന്നറിയിപ്പ്' : 'Medical & Psychometric Notice';
+    if (disclaimerTitle) disclaimerTitle.textContent = isMl ? 'പ്രത്യേകം ശ്രദ്ധിക്കുക (Medical Disclaimer)' : 'Medical & Psychometric Notice';
 
     const disclaimerText = document.querySelector('.medical-disclaimer-card .disclaimer-text');
     if (disclaimerText) {
       disclaimerText.innerHTML = isMl
-        ? `കോണേഴ്സ് അഡൽറ്റ് എഡിഎച്ച്ഡി റേറ്റിംഗ് സ്കെയിൽ (CAARS) മുതിർന്നവരിലെ എഡിഎച്ച്ഡി ലക്ഷണങ്ങളുടെ തീവ്രത കണക്കാക്കുന്നതിനുള്ള ഒരു സ്റ്റാൻഡേർഡ് സൈക്കോമെട്രിക് സ്കെയിലാണ്. ഉയർന്ന ടി-സ്കോർ (T &ge; 65) ലക്ഷണങ്ങളുടെ ഉയർന്ന തീവ്രതയെ സൂചിപ്പിക്കുന്നുണ്ടെങ്കിലും, <strong>ഇത് മാത്രം എഡിഎച്ച്ഡി രോഗനിർണ്ണയത്തിനുള്ള വൈദ്യശാസ്ത്ര സ്ഥിരീകരണമല്ല</strong>. കൃത്യമായ രോഗനിർണ്ണയത്തിന് ഡിഎസ്എം-5 (DSM-5) മാനദണ്ഡങ്ങൾക്കനുസൃതമായി യോഗ്യതയുള്ള ഒരു മനോരോഗ വിദഗ്ദ്ധന്റെയോ ക്ലിനിക്കൽ സൈക്കോളജിസ്റ്റിന്റെയോ വിശദമായ പരിശോധന ആവശ്യമാണ്.`
+        ? `മുതിർന്നവരിലെ ശ്രദ്ധക്കുറവും അമിത ചലനാത്മകതയും അളക്കാനുള്ള ഒരു ശാസ്ത്രീയ ചോദ്യാവലിയാണ് CAARS. ഇതിൽ ഉയർന്ന സ്കോർ (T &ge; 65) ലഭിക്കുന്നത് ലക്ഷണങ്ങൾ കൂടുതലാണെന്നതിന്റെ സൂചനയാണെങ്കിലും, <strong>ഇതുകൊണ്ട് മാത്രം ഒരാൾക്ക് ADHD ഉണ്ടെന്ന് ഉറപ്പിക്കാനാവില്ല</strong>. കൃത്യമായ രോഗനിർണ്ണയത്തിനായി ഒരു ഡോക്ടറെയോ ക്ലിനിക്കൽ സൈക്കോളജിസ്റ്റിനെയോ നേരിട്ട് കണ്ട് വിശദമായി സംസാരിക്കേണ്ടതാണ്.`
         : `The Conners' Adult ADHD Rating Scales (CAARS) is a standardized psychometric instrument designed to quantify the frequency and severity of behavioral symptoms associated with adult ADHD. A high score or clinical elevation (T &ge; 65) indicates clinically significant symptoms compared to the normative population, but <strong>does NOT alone establish a medical or psychiatric diagnosis of ADHD</strong>. Formal diagnosis requires a comprehensive clinical evaluation by a licensed healthcare professional in accordance with DSM-5 diagnostic criteria, incorporating developmental history, functional impairment, and ruling out differential medical or psychiatric conditions.`;
     }
 
@@ -574,10 +572,10 @@
       elements.btnCalculateScores.disabled = true;
 
       elements.missingTitleText.textContent = isMl
-        ? `പൂർത്തിയാകാത്ത പ്രോട്ടോക്കോൾ: ${validation.missingCount} ചോദ്യങ്ങൾക്ക് ഉത്തരമില്ല`
+        ? `${validation.missingCount} ചോദ്യങ്ങൾക്ക് ഉത്തരം നൽകാൻ ബാക്കിയുണ്ട്`
         : `Protocol Incomplete: ${validation.missingCount} Unanswered Item${validation.missingCount > 1 ? 's' : ''}`;
       elements.missingDescText.textContent = isMl
-        ? `കൃത്യമായ സ്കോറിംഗിന് എല്ലാ 66 ചോദ്യങ്ങൾക്കും ഉത്തരം നൽകേണ്ടതുണ്ട്. വിട്ടുപോയ ചോദ്യങ്ങളിൽ ക്ലിക്ക് ചെയ്ത് ഉത്തരം രേഖപ്പെടുത്തുക:`
+        ? `റിപ്പോർട്ട് കൃത്യമാകാൻ എല്ലാ 66 ചോദ്യങ്ങൾക്കും ഉത്തരം നൽകേണ്ടതുണ്ട്. താഴെ കാണുന്ന നമ്പറുകളിൽ ക്ലിക്ക് ചെയ്ത് വിട്ടുപോയ ചോദ്യങ്ങൾക്ക് ഉത്തരം നൽകുക:`
         : `Standard CAARS scoring requires all 66 items. Click any item number below to complete it:`;
 
       elements.missingItemsGrid.innerHTML = '';
@@ -596,10 +594,10 @@
       elements.btnCalculateScores.disabled = false;
 
       const compTitle = document.querySelector('#complete-notice-box .callout-title span');
-      if (compTitle) compTitle.textContent = isMl ? 'പ്രോട്ടോക്കോൾ പൂർത്തിയായി, സ്കോറുകൾ പരിശോധിക്കാം' : 'PROTOCOL COMPLETE & READY FOR SCORING';
+      if (compTitle) compTitle.textContent = isMl ? 'എല്ലാ ചോദ്യങ്ങൾക്കും ഉത്തരം നൽകിക്കഴിഞ്ഞു!' : 'PROTOCOL COMPLETE & READY FOR SCORING';
       const compDesc = document.querySelector('#complete-notice-box p');
       if (compDesc) compDesc.textContent = isMl
-        ? 'എല്ലാ 66 ചോദ്യങ്ങൾക്കും ഉത്തരങ്ങൾ രേഖപ്പെടുത്തിയിട്ടുണ്ട്. ക്ലിനിക്കൽ സ്കോറിംഗ് ആരംഭിച്ച് റിപ്പോർട്ട് കാണാൻ താഴെയുള്ള ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.'
+        ? 'എല്ലാ 66 ചോദ്യങ്ങൾക്കും ഉത്തരങ്ങൾ ലഭിച്ചു. ഇനി നിങ്ങളുടെ പരിശോധനാ ഫലങ്ങളും റിപ്പോർട്ടും കാണാൻ താഴെയുള്ള ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.'
         : 'All 66 psychometric items have been answered with valid responses. Proceed to execute the standardized scoring algorithm and generate the clinical diagnostic report.';
     }
 
@@ -669,11 +667,11 @@
     elements.validityBannerCard.className = `validity-banner ${isInc ? 'inconsistent' : 'valid'}`;
     if (isMl) {
       elements.validityTitleText.textContent = isInc
-        ? `പ്രോട്ടോക്കോൾ സാധുതാ മുന്നറിയിപ്പ്: ഉത്തരങ്ങളിൽ വൈരുദ്ധ്യം കൂടുതലാണ് (സ്കോർ = ${result.inconsistency_score}, പരിധി ≥ 8)`
-        : `പ്രോട്ടോക്കോൾ സാധുത: വിശ്വസനീയമായ ഉത്തരങ്ങൾ (സ്കോർ = ${result.inconsistency_score}, പരിധി ≥ 8)`;
+        ? `ശ്രദ്ധിക്കുക: ഉത്തരങ്ങളിൽ പൊരുത്തക്കേടുകൾ കാണുന്നുണ്ട് (സ്കോർ = ${result.inconsistency_score}, പരിധി ≥ 8)`
+        : `വിശ്വസനീയമായ ഉത്തരങ്ങൾ (സ്കോർ = ${result.inconsistency_score}, പരിധി ≥ 8)`;
       elements.validityDescText.textContent = isInc
-        ? `സമാനമായ ചോദ്യങ്ങൾക്കുള്ള ഉത്തരങ്ങൾ തമ്മിൽ വൈരുദ്ധ്യം കാണിക്കുന്നു. സ്കോറുകൾ വിലയിരുത്തുമ്പോൾ ജാഗ്രത പുലർത്തുക.`
-        : `സമാനമായ ചോദ്യങ്ങൾക്ക് നൽകിയ ഉത്തരങ്ങൾ തമ്മിൽ പൊരുത്തമുള്ളതാണ്. ഈ പ്രോട്ടോക്കോൾ സാധുതയുള്ളതാണ്.`;
+        ? `ഒരേപോലെയുള്ള ചില ചോദ്യങ്ങൾക്ക് പരസ്പരവിരുദ്ധമായ ഉത്തരങ്ങൾ നൽകിയിട്ടുണ്ട്. അതിനാൽ ഈ റിപ്പോർട്ടിലെ സ്കോറുകൾ വിലയിരുത്തുമ്പോൾ ജാഗ്രത പുലർത്തുക.`
+        : `ചോദ്യങ്ങൾക്ക് പരസ്പരം ഒത്തുപോകുന്ന വ്യക്തമായ ഉത്തരങ്ങളാണ് നൽകിയിട്ടുള്ളത്. ഈ റിപ്പോർട്ട് വിശ്വസനീയമാണ്.`;
     } else {
       elements.validityTitleText.textContent = isInc
         ? `PROTOCOL VALIDITY ALERT: High Response Inconsistency (Score = ${result.inconsistency_score}, Cutoff ≥ 8)`
@@ -694,8 +692,8 @@
         const classifText = (isMl && window.CAARS_I18N)
           ? (window.CAARS_I18N.DICTIONARY.ml.classifications[s.classification_level] || s.classification)
           : s.classification;
-        const rawPrefix = isMl ? 'റോ സ്കോർ:' : 'Raw Score:';
-        const scalePrefix = isMl ? 'സ്കെയിൽ' : 'Scale';
+        const rawPrefix = isMl ? 'പോയിന്റ്:' : 'Raw Score:';
+        const scalePrefix = isMl ? 'മേഖല' : 'Scale';
 
         const card = document.createElement('div');
         card.className = `hero-score-card ${s.classification_level}`;
@@ -915,7 +913,6 @@
     if (elements.btnSurveyNextTop) elements.btnSurveyNextTop.addEventListener('click', handleSurveyNext);
     if (elements.btnSurveyPrevTop) elements.btnSurveyPrevTop.addEventListener('click', handleSurveyPrev);
     if (elements.btnSurveyReviewTop) elements.btnSurveyReviewTop.addEventListener('click', handleSurveyReview);
-    elements.btnPrefillDemo.addEventListener('click', handlePrefillDemo);
 
     // Stage 3
     elements.btnReviewBack.addEventListener('click', () => showStage(elements.stageSurvey));
