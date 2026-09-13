@@ -64,11 +64,11 @@
   --color-danger-subtle: #ffe4e6;
   --color-danger-text: #be123c;
 
-  /* Malayalam Yellow Accent (Light Mode: rich amber-gold for AA contrast) */
-  --color-malayalam: #b45309;
-  --color-malayalam-bright: #ca8a04;
-  --color-malayalam-bg: rgba(202, 138, 4, 0.12);
-  --color-malayalam-border: rgba(180, 83, 9, 0.35);
+  /* Malayalam Yellow Accent (#edc34e) */
+  --color-malayalam: #edc34e;
+  --color-malayalam-bright: #f6d878;
+  --color-malayalam-bg: rgba(237, 195, 78, 0.14);
+  --color-malayalam-border: rgba(237, 195, 78, 0.35);
 
   /* Elevation Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -118,11 +118,11 @@
   --color-danger-subtle: #400813;
   --color-danger-text: #fda4af;
 
-  /* Malayalam Yellow Accent (Dark Mode: vivid pure gold-yellow) */
-  --color-malayalam: #ffd700;
-  --color-malayalam-bright: #ffea00;
-  --color-malayalam-bg: rgba(255, 215, 0, 0.12);
-  --color-malayalam-border: rgba(255, 215, 0, 0.35);
+  /* Malayalam Yellow Accent (#edc34e) */
+  --color-malayalam: #edc34e;
+  --color-malayalam-bright: #f6d878;
+  --color-malayalam-bg: rgba(237, 195, 78, 0.14);
+  --color-malayalam-border: rgba(237, 195, 78, 0.35);
 
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.7);
   --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.85);
@@ -437,14 +437,14 @@ body {
   background-color: var(--color-malayalam);
   color: #000000 !important;
   border-color: var(--color-malayalam);
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.45);
+  box-shadow: 0 0 10px rgba(237, 195, 78, 0.45);
 }
 
 [data-theme="dark"] #btn-lang-ml.active {
   background-color: var(--color-malayalam);
   color: #000000 !important;
   border-color: var(--color-malayalam);
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 12px rgba(237, 195, 78, 0.5);
 }
 
 /* Likert legend badge and cards in Malayalam mode */
