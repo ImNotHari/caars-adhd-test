@@ -1,24 +1,26 @@
 """
-CAARS Standalone System Entrypoint (Phase 1 CLI Demonstration)
+CAARS Adult ADHD Assessment & Scoring System
+Entry point for GUI Desktop application or CLI test runner.
 """
 
 import sys
+import argparse
 from datetime import date
-from caars.engine.scoring import ScoringEngine
-from caars.engine.norms import NormsEngine
-from caars.database.db import DatabaseManager
 
-def demo():
+def run_cli_demo():
     print("=" * 60)
-    print("  CAARS Offline Assessment & Scoring System (Phase 1)")
+    print("  CAARS Offline Assessment & Scoring System (CLI Mode)")
     print("=" * 60)
+
+    from caars.engine.scoring import ScoringEngine
+    from caars.engine.norms import NormsEngine
+    from caars.database.db import DatabaseManager
 
     db = DatabaseManager()
     engine = ScoringEngine()
 
     print("\n1. Initializing Local Database: caars.db ... OK")
 
-    # Sample demo patient
     mrn = "DEMO-001"
     existing = db.get_patient_by_mrn(mrn)
     if not existing:
@@ -35,11 +37,10 @@ def demo():
         p_id = existing["id"]
         print(f"2. Loaded Existing Patient: Alex Taylor (ID: {p_id})")
 
-    # Age bracket
     age_bracket = NormsEngine.get_age_bracket("1995-06-15")
     print(f"   Demographic Norm Cohort: Male, Age bracket: {age_bracket}")
 
-    # Generate a realistic elevated profile response (elevated inattention, moderate hyperactivity)
+    # Sample responses with elevated inattention
     sample_responses = {}
     for q in engine.get_questions_list():
         qid = q["id"]
@@ -51,7 +52,6 @@ def demo():
         else:
             sample_responses[qid] = 1
 
-    # Evaluate
     result = engine.evaluate_assessment(
         responses=sample_responses,
         form_type="self",
@@ -69,25 +69,19 @@ def demo():
     for s in result["scores"]:
         print(f"   {s['scale_code']:<6} {s['scale_name']:<35} {s['raw_score']:<6} {s['t_score']:<9} {s['percentile']:<12.1f} {s['classification']}")
 
-    # Save assessment into DB
-    ass_id = db.create_assessment(
-        patient_id=p_id,
-        form_type="self",
-        rater_name="Alex Taylor",
-        administered_date=str(date.today()),
-        relationship="Self"
-    )
-    db.save_responses(ass_id, sample_responses)
-    db.save_scores(
-        assessment_id=ass_id,
-        inconsistency_score=result["inconsistency_score"],
-        inconsistency_flag=result["inconsistency_flag"],
-        scores=result["scores"]
-    )
-    print(f"\n4. Assessment persisted to local SQLite database (Assessment ID: {ass_id})")
-    print("=" * 60)
-    print("Phase 1 Core Foundation & Scoring Engine is fully operational!")
     print("=" * 60)
 
+def main():
+    parser = argparse.ArgumentParser(description="CAARS Adult ADHD Assessment System")
+    parser.add_argument("--cli", action="store_true", help="Run CLI demo mode instead of Desktop GUI")
+    args = parser.parse_args()
+
+    if args.cli:
+        run_cli_demo()
+    else:
+        from caars.gui.app import CAARSApp
+        app = CAARSApp()
+        app.mainloop()
+
 if __name__ == "__main__":
-    demo()
+    main()
