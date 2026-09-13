@@ -4,7 +4,7 @@
   "private": true,
   "description": "Standardized Conners' Adult ADHD Rating Scales (CAARS) 66-item clinical administration, normative T-score scoring, and psychometric reporting tool.",
   "scripts": {
-    "test": "node tests/test_scoring.js && node tests/test_norms.js && node tests/test_inconsistency.js && node tests/test_boundaries.js",
+    "test": "node tests/test_i18n.js && node tests/test_scoring.js && node tests/test_norms.js && node tests/test_inconsistency.js && node tests/test_boundaries.js",
     "deploy": "vercel --prod"
   },
   "keywords": [

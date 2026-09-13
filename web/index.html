@@ -49,6 +49,12 @@
       </div>
 
       <div class="header-actions">
+        <!-- Language Switcher Toggle (English / Malayalam) -->
+        <div class="lang-switch-container" role="group" aria-label="Language selection" title="Switch language between English and Malayalam">
+          <button type="button" id="btn-lang-en" class="lang-btn active" aria-pressed="true" data-lang="en">EN</button>
+          <button type="button" id="btn-lang-ml" class="lang-btn" aria-pressed="false" data-lang="ml">മലയാളം</button>
+        </div>
+
         <button type="button" id="btn-theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark and light theme" title="Toggle theme mode">
           <svg id="theme-icon-sun" class="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;" aria-hidden="true">
             <circle cx="12" cy="12" r="5"></circle>
@@ -87,32 +93,32 @@
           <div class="setup-form-grid">
             
             <div class="form-group">
-              <label for="select-form-type" class="form-label">Assessment Form Protocol *</label>
+              <label for="select-form-type" id="label-form-type" class="form-label">Assessment Form Protocol *</label>
               <select id="select-form-type" class="form-select" required>
-                <option value="CAARS-S:L" selected>CAARS-S:L (Self-Report, Long Form — 66 Items)</option>
-                <option value="CAARS-O:L">CAARS-O:L (Observer Report, Long Form — 66 Items)</option>
+                <option value="CAARS-S:L" id="opt-form-self" selected>CAARS-S:L (Self-Report, Long Form — 66 Items)</option>
+                <option value="CAARS-O:L" id="opt-form-observer">CAARS-O:L (Observer Report, Long Form — 66 Items)</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="select-gender" class="form-label">Biological Gender (Normative Group) *</label>
+              <label for="select-gender" id="label-gender" class="form-label">Biological Gender (Normative Group) *</label>
               <select id="select-gender" class="form-select" required>
-                <option value="Male" selected>Male</option>
-                <option value="Female">Female</option>
+                <option value="Male" id="opt-gender-male" selected>Male</option>
+                <option value="Female" id="opt-gender-female">Female</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="select-age-bracket" class="form-label">Age Cohort (Normative Group) *</label>
+              <label for="select-age-bracket" id="label-age-bracket" class="form-label">Age Cohort (Normative Group) *</label>
               <select id="select-age-bracket" class="form-select" required>
-                <option value="18-29" selected>18–29 Years</option>
-                <option value="30-49">30–49 Years</option>
-                <option value="50+">50+ Years</option>
+                <option value="18-29" id="opt-age-18-29" selected>18–29 Years</option>
+                <option value="30-49" id="opt-age-30-49">30–49 Years</option>
+                <option value="50+" id="opt-age-50-plus">50+ Years</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="input-rater-label" class="form-label">Respondent / Rater Identifier (Optional)</label>
+              <label for="input-rater-label" id="label-rater" class="form-label">Respondent / Rater Identifier (Optional)</label>
               <input type="text" id="input-rater-label" class="form-input" placeholder="e.g. Self, Spouse, Colleague" maxlength="40">
             </div>
 
@@ -121,27 +127,27 @@
           <!-- Likert Scale Instructions -->
           <div class="info-callout" role="region" aria-label="Rating Scale Guide">
             <div class="callout-title">
-              <span>Standard 4-Point Likert Rating Guide</span>
+              <span id="likert-guide-title">Standard 4-Point Likert Rating Guide</span>
             </div>
-            <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.75rem;">
+            <p id="likert-guide-desc" class="likert-guide-desc" style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.75rem;">
               Read each item carefully and indicate how often you (or the person you are rating) experience the described behavior in daily life:
             </p>
             <div class="likert-legend-grid">
-              <div class="legend-item">
+              <div class="legend-item" id="legend-item-0">
                 <span class="legend-badge">0</span>
-                <span><strong>Not at all, never</strong> (Rarely or never occurs)</span>
+                <span class="legend-text" id="legend-text-0"><strong>Not at all, never</strong> (Rarely or never occurs)</span>
               </div>
-              <div class="legend-item">
+              <div class="legend-item" id="legend-item-1">
                 <span class="legend-badge">1</span>
-                <span><strong>Just a little</strong> (Once in a while)</span>
+                <span class="legend-text" id="legend-text-1"><strong>Just a little</strong> (Once in a while)</span>
               </div>
-              <div class="legend-item">
+              <div class="legend-item" id="legend-item-2">
                 <span class="legend-badge">2</span>
-                <span><strong>Pretty much</strong> (Often, quite a bit)</span>
+                <span class="legend-text" id="legend-text-2"><strong>Pretty much</strong> (Often, quite a bit)</span>
               </div>
-              <div class="legend-item">
+              <div class="legend-item" id="legend-item-3">
                 <span class="legend-badge">3</span>
-                <span><strong>Very much</strong> (Very frequently)</span>
+                <span class="legend-text" id="legend-text-3"><strong>Very much</strong> (Very frequently)</span>
               </div>
             </div>
           </div>
@@ -440,6 +446,7 @@
   </div>
 
   <!-- Pure Client-Side JavaScript Modules (Zero NPM dependencies) -->
+  <script src="js/i18n.js"></script>
   <script src="js/questions.js"></script>
   <script src="js/norms.js"></script>
   <script src="js/scoring.js"></script>

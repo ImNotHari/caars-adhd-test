@@ -18,6 +18,7 @@
     gender: 'Male',
     ageBracket: '18-29',
     raterLabel: '',
+    language: 'en',
     currentSection: 0,
     responses: {},
     evaluation: null,
@@ -30,6 +31,8 @@
     btnThemeToggle: document.getElementById('btn-theme-toggle'),
     themeIconSun: document.getElementById('theme-icon-sun'),
     themeIconMoon: document.getElementById('theme-icon-moon'),
+    btnLangEn: document.getElementById('btn-lang-en'),
+    btnLangMl: document.getElementById('btn-lang-ml'),
 
     // Stages
     stageSetup: document.getElementById('stage-setup'),
@@ -119,6 +122,218 @@
   }
 
   /* ==========================================================================
+     1.5. Language Management (i18n: English / Malayalam)
+     ========================================================================== */
+  function initLanguage() {
+    const savedLang = localStorage.getItem('caars_lang');
+    const initialLang = (savedLang === 'ml') ? 'ml' : 'en';
+    setLanguage(initialLang);
+  }
+
+  function setLanguage(lang) {
+    state.language = lang;
+    if (typeof window !== 'undefined') {
+      window.CAARS_ACTIVE_LANG = lang;
+    }
+    elements.html.setAttribute('lang', lang);
+    localStorage.setItem('caars_lang', lang);
+
+    // Update toggle buttons
+    if (elements.btnLangEn && elements.btnLangMl) {
+      elements.btnLangEn.classList.toggle('active', lang === 'en');
+      elements.btnLangEn.setAttribute('aria-pressed', lang === 'en');
+      elements.btnLangMl.classList.toggle('active', lang === 'ml');
+      elements.btnLangMl.setAttribute('aria-pressed', lang === 'ml');
+    }
+
+    // Refresh UI text across stages
+    updateStaticUI();
+
+    // If currently on Survey stage, re-render questions dynamically without losing responses
+    if (elements.stageSurvey && elements.stageSurvey.classList.contains('active')) {
+      renderCurrentSection();
+    } else if (elements.stageReview && elements.stageReview.classList.contains('active')) {
+      handleSurveyReview();
+    } else if (elements.stageResults && elements.stageResults.classList.contains('active') && state.evaluation) {
+      renderResultsReport();
+    }
+  }
+
+  function updateStaticUI() {
+    const lang = state.language;
+    const isMl = lang === 'ml';
+    const t = (k, p) => window.CAARS_I18N ? window.CAARS_I18N.t(k, p, lang) : k;
+
+    // Stage 1 Setup Text
+    const headingSetup = document.getElementById('heading-setup');
+    if (headingSetup) headingSetup.textContent = t('setup_title');
+    
+    const heroSub = document.querySelector('#stage-setup .hero-subtitle');
+    if (heroSub) heroSub.textContent = t('setup_subtitle');
+
+    if (elements.btnStartSurvey) {
+      const btnSpan = elements.btnStartSurvey.querySelector('span:first-child');
+      if (btnSpan) btnSpan.textContent = t('btn_start_survey');
+      else elements.btnStartSurvey.textContent = t('btn_start_survey');
+    }
+
+    // Form labels and dropdown options
+    const lblFormType = document.getElementById('label-form-type');
+    if (lblFormType) lblFormType.textContent = t('form_type_label');
+    
+    const optFormSelf = document.getElementById('opt-form-self');
+    if (optFormSelf) optFormSelf.textContent = t('form_self');
+    
+    const optFormObserver = document.getElementById('opt-form-observer');
+    if (optFormObserver) optFormObserver.textContent = t('form_observer');
+
+    const lblGender = document.getElementById('label-gender');
+    if (lblGender) lblGender.textContent = t('gender_label');
+
+    const optGenderMale = document.getElementById('opt-gender-male');
+    if (optGenderMale) optGenderMale.textContent = t('gender_male');
+
+    const optGenderFemale = document.getElementById('opt-gender-female');
+    if (optGenderFemale) optGenderFemale.textContent = t('gender_female');
+
+    const lblAge = document.getElementById('label-age-bracket');
+    if (lblAge) lblAge.textContent = t('age_label');
+
+    const optAge1829 = document.getElementById('opt-age-18-29');
+    if (optAge1829) optAge1829.textContent = t('age_18_29');
+
+    const optAge3049 = document.getElementById('opt-age-30-49');
+    if (optAge3049) optAge3049.textContent = t('age_30_49');
+
+    const optAge50Plus = document.getElementById('opt-age-50-plus');
+    if (optAge50Plus) optAge50Plus.textContent = t('age_50_plus');
+
+    const lblRater = document.getElementById('label-rater');
+    if (lblRater) lblRater.textContent = t('rater_label');
+
+    if (elements.inputRaterLabel) {
+      elements.inputRaterLabel.placeholder = t('rater_placeholder');
+    }
+
+    const offlinePillText = document.getElementById('offline-pill-text');
+    if (offlinePillText) offlinePillText.textContent = t('offline_pill');
+
+    // Likert guide headers and options
+    const guideTitle = document.getElementById('likert-guide-title') || document.querySelector('.info-callout .callout-title span');
+    if (guideTitle) guideTitle.textContent = t('likert_guide_title');
+
+    const guideDesc = document.getElementById('likert-guide-desc');
+    if (guideDesc) guideDesc.textContent = t('likert_guide_desc');
+
+    if (window.CAARS_I18N && window.CAARS_I18N.getLikertLegend) {
+      const legendTexts = window.CAARS_I18N.getLikertLegend(lang);
+      [0, 1, 2, 3].forEach(val => {
+        const el = document.getElementById(`legend-text-${val}`);
+        if (el && legendTexts[val]) {
+          el.innerHTML = legendTexts[val];
+        }
+      });
+    }
+
+    // Stage 2 Buttons
+    const updateBtnText = (btn, textKey) => {
+      if (!btn) return;
+      const span = btn.querySelector('span');
+      if (span) span.textContent = t(textKey);
+      else btn.textContent = t(textKey);
+    };
+
+    updateBtnText(elements.btnSurveyPrev, 'btn_prev');
+    updateBtnText(elements.btnSurveyPrevTop, 'btn_prev');
+    updateBtnText(elements.btnSurveyNext, 'btn_next');
+    updateBtnText(elements.btnSurveyNextTop, 'btn_next');
+    updateBtnText(elements.btnSurveyReview, 'btn_review');
+    updateBtnText(elements.btnSurveyReviewTop, 'btn_review');
+    updateBtnText(elements.btnPrefillDemo, 'btn_prefill_demo');
+
+    // Stage 3 Review UI
+    const headingReview = document.getElementById('heading-review');
+    if (headingReview) headingReview.textContent = t('review_title');
+
+    const reviewSub = document.querySelector('#stage-review .review-box > p');
+    if (reviewSub) reviewSub.textContent = t('review_subtitle');
+
+    updateBtnText(elements.btnReviewBack, 'btn_review_back');
+    updateBtnText(elements.btnCalculateScores, 'btn_calculate_scores');
+
+    // Stage 4 Results UI
+    const headingResults = document.getElementById('heading-results');
+    if (headingResults) headingResults.textContent = t('report_title');
+
+    const btnExportSpan = document.querySelector('#btn-export-dropdown span');
+    if (btnExportSpan) btnExportSpan.textContent = t('btn_export_options');
+
+    const exportJsonTitle = document.querySelector('#btn-export-json .export-item-title');
+    if (exportJsonTitle) exportJsonTitle.textContent = t('btn_export_json_title');
+
+    const exportJsonDesc = document.querySelector('#btn-export-json .export-item-subtitle');
+    if (exportJsonDesc) exportJsonDesc.textContent = t('btn_export_json_desc');
+
+    const exportCsvTitle = document.querySelector('#btn-export-csv .export-item-title');
+    if (exportCsvTitle) exportCsvTitle.textContent = t('btn_export_csv_title');
+
+    const exportCsvDesc = document.querySelector('#btn-export-csv .export-item-subtitle');
+    if (exportCsvDesc) exportCsvDesc.textContent = t('btn_export_csv_desc');
+
+    const heroScoresTitle = document.querySelector('.hero-scores-section .table-title');
+    if (heroScoresTitle) heroScoresTitle.textContent = t('hero_title');
+
+    const heroScoresSub = document.querySelector('.hero-scores-section .table-subtitle');
+    if (heroScoresSub) heroScoresSub.textContent = t('hero_subtitle');
+
+    const tableTitle = document.querySelector('.table-card .table-title');
+    if (tableTitle) tableTitle.textContent = t('table_title');
+
+    const tableSub = document.querySelector('.table-card .table-subtitle');
+    if (tableSub) tableSub.textContent = t('table_subtitle');
+
+    const thScale = document.querySelector('.caars-table th:nth-child(1)');
+    if (thScale) thScale.textContent = t('th_scale');
+
+    const thDesc = document.querySelector('.caars-table th:nth-child(2)');
+    if (thDesc) thDesc.textContent = t('th_description');
+
+    const thRaw = document.querySelector('.caars-table th:nth-child(3)');
+    if (thRaw) thRaw.textContent = t('th_raw');
+
+    const thT = document.querySelector('.caars-table th:nth-child(4)');
+    if (thT) thT.textContent = t('th_tscore');
+
+    const thClass = document.querySelector('.caars-table th:nth-child(5)');
+    if (thClass) thClass.textContent = t('th_classification');
+
+    const disclaimerTitle = document.querySelector('.medical-disclaimer-card .disclaimer-title span');
+    if (disclaimerTitle) disclaimerTitle.textContent = isMl ? 'വൈദ്യശാസ്ത്ര & സൈക്കോമെട്രിക് മുന്നറിയിപ്പ്' : 'Medical & Psychometric Notice';
+
+    const disclaimerText = document.querySelector('.medical-disclaimer-card .disclaimer-text');
+    if (disclaimerText) {
+      disclaimerText.innerHTML = isMl
+        ? `കോണേഴ്സ് അഡൽറ്റ് എഡിഎച്ച്ഡി റേറ്റിംഗ് സ്കെയിൽ (CAARS) മുതിർന്നവരിലെ എഡിഎച്ച്ഡി ലക്ഷണങ്ങളുടെ തീവ്രത കണക്കാക്കുന്നതിനുള്ള ഒരു സ്റ്റാൻഡേർഡ് സൈക്കോമെട്രിക് സ്കെയിലാണ്. ഉയർന്ന ടി-സ്കോർ (T &ge; 65) ലക്ഷണങ്ങളുടെ ഉയർന്ന തീവ്രതയെ സൂചിപ്പിക്കുന്നുണ്ടെങ്കിലും, <strong>ഇത് മാത്രം എഡിഎച്ച്ഡി രോഗനിർണ്ണയത്തിനുള്ള വൈദ്യശാസ്ത്ര സ്ഥിരീകരണമല്ല</strong>. കൃത്യമായ രോഗനിർണ്ണയത്തിന് ഡിഎസ്എം-5 (DSM-5) മാനദണ്ഡങ്ങൾക്കനുസൃതമായി യോഗ്യതയുള്ള ഒരു മനോരോഗ വിദഗ്ദ്ധന്റെയോ ക്ലിനിക്കൽ സൈക്കോളജിസ്റ്റിന്റെയോ വിശദമായ പരിശോധന ആവശ്യമാണ്.`
+        : `The Conners' Adult ADHD Rating Scales (CAARS) is a standardized psychometric instrument designed to quantify the frequency and severity of behavioral symptoms associated with adult ADHD. A high score or clinical elevation (T &ge; 65) indicates clinically significant symptoms compared to the normative population, but <strong>does NOT alone establish a medical or psychiatric diagnosis of ADHD</strong>. Formal diagnosis requires a comprehensive clinical evaluation by a licensed healthcare professional in accordance with DSM-5 diagnostic criteria, incorporating developmental history, functional impairment, and ruling out differential medical or psychiatric conditions.`;
+    }
+
+    const modalTitle = document.getElementById('modal-reset-title');
+    if (modalTitle) modalTitle.textContent = t('modal_reset_title');
+
+    const modalDesc = document.querySelector('#modal-confirm-reset .modal-desc');
+    if (modalDesc) modalDesc.textContent = t('modal_reset_desc');
+
+    const modalCancel = document.getElementById('btn-modal-cancel');
+    if (modalCancel) modalCancel.textContent = t('btn_modal_cancel');
+
+    const modalConfirm = document.getElementById('btn-modal-confirm');
+    if (modalConfirm) modalConfirm.textContent = t('btn_modal_confirm');
+
+    updateBtnText(elements.btnPrintReport, 'btn_print_report');
+    updateBtnText(elements.btnStartNew, 'btn_start_new');
+  }
+
+  /* ==========================================================================
      2. Ephemeral Memory & Unsaved Warning Protection
      ========================================================================== */
   window.addEventListener('beforeunload', function (e) {
@@ -174,9 +389,14 @@
     // Clear and build question cards
     elements.questionsList.innerHTML = '';
     const isSelf = state.formType === 'CAARS-S:L';
+    const labels = window.CAARS_I18N
+      ? window.CAARS_I18N.getLikertLabels(state.language)
+      : ['Not at all, never', 'Just a little', 'Pretty much, often', 'Very much'];
 
     sectionQuestions.forEach(q => {
-      const qText = isSelf ? q.text_self : q.text_observer;
+      const qText = window.CAARS_I18N
+        ? window.CAARS_I18N.getQuestionText(q, state.formType, state.language)
+        : (isSelf ? q.text_self : q.text_observer);
       const currentScore = state.responses[q.id];
 
       const card = document.createElement('div');
@@ -191,7 +411,6 @@
         <div class="likert-group" role="radiogroup" aria-labelledby="q-label-${q.id}">
           ${[0, 1, 2, 3].map(val => {
             const isChecked = currentScore === val;
-            const labels = ['Not at all, never', 'Just a little', 'Pretty much, often', 'Very much'];
             return `
               <label class="likert-btn-label ${isChecked ? 'selected' : ''}" id="lbl-q${q.id}-${val}">
                 <input type="radio" name="q_${q.id}" value="${val}" ${isChecked ? 'checked' : ''} aria-label="Option ${val}: ${labels[val]}">
@@ -301,7 +520,10 @@
     const answeredCount = Object.keys(state.responses).length;
     const pct = Math.round((answeredCount / TOTAL_QUESTIONS) * 100);
 
-    elements.labelAnsweredCount.textContent = `${answeredCount} / ${TOTAL_QUESTIONS} Answered (${pct}%)`;
+    const counterText = window.CAARS_I18N
+      ? window.CAARS_I18N.t('answered_counter', { answered: answeredCount, total: TOTAL_QUESTIONS }, state.language)
+      : `${answeredCount} / ${TOTAL_QUESTIONS} Answered`;
+    elements.labelAnsweredCount.textContent = `${counterText} (${pct}%)`;
     elements.surveyProgressFill.style.width = `${pct}%`;
     document.getElementById('progress-bar-container').setAttribute('aria-valuenow', pct);
   }
@@ -342,19 +564,21 @@
     renderCurrentSection();
   }
 
-  /* ==========================================================================
-     6. Pre-Submit Validation & Review (Stage 3)
-     ========================================================================== */
   function handleSurveyReview() {
     const validation = window.CAARS_SCORING.validateResponses(state.responses);
+    const isMl = state.language === 'ml';
 
     if (!validation.complete) {
       elements.missingAlertBox.style.display = 'block';
       elements.completeNoticeBox.style.display = 'none';
       elements.btnCalculateScores.disabled = true;
 
-      elements.missingTitleText.textContent = `Protocol Incomplete: ${validation.missingCount} Unanswered Item${validation.missingCount > 1 ? 's' : ''}`;
-      elements.missingDescText.textContent = `Standard CAARS scoring requires all 66 items. Click any item number below to complete it:`;
+      elements.missingTitleText.textContent = isMl
+        ? `പൂർത്തിയാകാത്ത പ്രോട്ടോക്കോൾ: ${validation.missingCount} ചോദ്യങ്ങൾക്ക് ഉത്തരമില്ല`
+        : `Protocol Incomplete: ${validation.missingCount} Unanswered Item${validation.missingCount > 1 ? 's' : ''}`;
+      elements.missingDescText.textContent = isMl
+        ? `കൃത്യമായ സ്കോറിംഗിന് എല്ലാ 66 ചോദ്യങ്ങൾക്കും ഉത്തരം നൽകേണ്ടതുണ്ട്. വിട്ടുപോയ ചോദ്യങ്ങളിൽ ക്ലിക്ക് ചെയ്ത് ഉത്തരം രേഖപ്പെടുത്തുക:`
+        : `Standard CAARS scoring requires all 66 items. Click any item number below to complete it:`;
 
       elements.missingItemsGrid.innerHTML = '';
       validation.missingIds.forEach(id => {
@@ -362,7 +586,7 @@
         jumpBtn.type = 'button';
         jumpBtn.className = 'jump-item-btn';
         jumpBtn.textContent = `Q${String(id).padStart(2, '0')}`;
-        jumpBtn.title = `Jump to question ${id}`;
+        jumpBtn.title = isMl ? `ചോദ്യം ${id}-ലേക്ക് പോകുക` : `Jump to question ${id}`;
         jumpBtn.addEventListener('click', () => jumpToQuestion(id));
         elements.missingItemsGrid.appendChild(jumpBtn);
       });
@@ -370,6 +594,13 @@
       elements.missingAlertBox.style.display = 'none';
       elements.completeNoticeBox.style.display = 'block';
       elements.btnCalculateScores.disabled = false;
+
+      const compTitle = document.querySelector('#complete-notice-box .callout-title span');
+      if (compTitle) compTitle.textContent = isMl ? 'പ്രോട്ടോക്കോൾ പൂർത്തിയായി, സ്കോറുകൾ പരിശോധിക്കാം' : 'PROTOCOL COMPLETE & READY FOR SCORING';
+      const compDesc = document.querySelector('#complete-notice-box p');
+      if (compDesc) compDesc.textContent = isMl
+        ? 'എല്ലാ 66 ചോദ്യങ്ങൾക്കും ഉത്തരങ്ങൾ രേഖപ്പെടുത്തിയിട്ടുണ്ട്. ക്ലിനിക്കൽ സ്കോറിംഗ് ആരംഭിച്ച് റിപ്പോർട്ട് കാണാൻ താഴെയുള്ള ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.'
+        : 'All 66 psychometric items have been answered with valid responses. Proceed to execute the standardized scoring algorithm and generate the clinical diagnostic report.';
     }
 
     showStage(elements.stageReview);
@@ -410,44 +641,75 @@
     state.evaluation = result;
     state.isDirty = false; // Scoring complete, unblock unload
 
+    renderResultsReport();
+    showStage(elements.stageResults);
+  }
+
+  function renderResultsReport() {
+    if (!state.evaluation) return;
+    const result = state.evaluation;
+    const isMl = state.language === 'ml';
+    const t = (k, p) => window.CAARS_I18N ? window.CAARS_I18N.t(k, p, state.language) : k;
+
     // 1. Populate Report Header Metadata
     const d = new Date(result.timestamp);
-    const dateFormatted = d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-    elements.reportTimestampLine.textContent = `Administered: ${dateFormatted} • Standalone Engine v${result.scoring_version}`;
+    const dateFormatted = d.toLocaleDateString(isMl ? 'ml-IN' : undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    elements.reportTimestampLine.textContent = isMl
+      ? `തീയതി: ${dateFormatted} • എഞ്ചിൻ v${result.scoring_version}`
+      : `Administered: ${dateFormatted} • Standalone Engine v${result.scoring_version}`;
     elements.resFormType.textContent = result.protocol.form_type;
-    elements.resNormGroup.textContent = `${result.protocol.gender} • Age ${result.protocol.age_bracket}`;
-    elements.resRaterLabel.textContent = result.protocol.rater_label;
-    elements.resProtocolStatus.textContent = 'Complete & Scored';
+    elements.resNormGroup.textContent = isMl
+      ? `${result.protocol.gender === 'Male' ? 'പുരുഷൻ' : 'സ്ത്രീ'} • പ്രായം ${result.protocol.age_bracket}`
+      : `${result.protocol.gender} • Age ${result.protocol.age_bracket}`;
+    elements.resRaterLabel.textContent = result.protocol.rater_label || (isMl ? 'സ്വയം' : 'Self');
+    elements.resProtocolStatus.textContent = t('meta_status_value');
 
     // 2. Protocol Validity Banner
     const isInc = result.inconsistency_flag;
     elements.validityBannerCard.className = `validity-banner ${isInc ? 'inconsistent' : 'valid'}`;
-    elements.validityTitleText.textContent = isInc
-      ? `PROTOCOL VALIDITY ALERT: High Response Inconsistency (Score = ${result.inconsistency_score}, Cutoff ≥ 8)`
-      : `PROTOCOL VALIDITY: Acceptable Internal Consistency (Score = ${result.inconsistency_score}, Cutoff ≥ 8)`;
-    elements.validityDescText.textContent = result.inconsistency_warning;
+    if (isMl) {
+      elements.validityTitleText.textContent = isInc
+        ? `പ്രോട്ടോക്കോൾ സാധുതാ മുന്നറിയിപ്പ്: ഉത്തരങ്ങളിൽ വൈരുദ്ധ്യം കൂടുതലാണ് (സ്കോർ = ${result.inconsistency_score}, പരിധി ≥ 8)`
+        : `പ്രോട്ടോക്കോൾ സാധുത: വിശ്വസനീയമായ ഉത്തരങ്ങൾ (സ്കോർ = ${result.inconsistency_score}, പരിധി ≥ 8)`;
+      elements.validityDescText.textContent = isInc
+        ? `സമാനമായ ചോദ്യങ്ങൾക്കുള്ള ഉത്തരങ്ങൾ തമ്മിൽ വൈരുദ്ധ്യം കാണിക്കുന്നു. സ്കോറുകൾ വിലയിരുത്തുമ്പോൾ ജാഗ്രത പുലർത്തുക.`
+        : `സമാനമായ ചോദ്യങ്ങൾക്ക് നൽകിയ ഉത്തരങ്ങൾ തമ്മിൽ പൊരുത്തമുള്ളതാണ്. ഈ പ്രോട്ടോക്കോൾ സാധുതയുള്ളതാണ്.`;
+    } else {
+      elements.validityTitleText.textContent = isInc
+        ? `PROTOCOL VALIDITY ALERT: High Response Inconsistency (Score = ${result.inconsistency_score}, Cutoff ≥ 8)`
+        : `PROTOCOL VALIDITY: Acceptable Internal Consistency (Score = ${result.inconsistency_score}, Cutoff ≥ 8)`;
+      elements.validityDescText.textContent = result.inconsistency_warning;
+    }
 
     // 3. Render Large Hero Summary Scores First
     if (elements.heroScoresGrid) {
       elements.heroScoresGrid.innerHTML = '';
-      // Key summary diagnostic indices: H (ADHD Index), G (DSM-IV Total), E (Inattention), F (Hyperactivity)
       const keyScaleCodes = ['H', 'G', 'E', 'F'];
       const keyScores = keyScaleCodes.map(code => result.scores.find(s => s.scale_code === code)).filter(Boolean);
 
       keyScores.forEach(s => {
+        const scaleName = (isMl && window.CAARS_I18N)
+          ? (window.CAARS_I18N.DICTIONARY.ml.scales[s.scale_code] || s.scale_name)
+          : s.scale_name;
+        const classifText = (isMl && window.CAARS_I18N)
+          ? (window.CAARS_I18N.DICTIONARY.ml.classifications[s.classification_level] || s.classification)
+          : s.classification;
+        const rawPrefix = isMl ? 'റോ സ്കോർ:' : 'Raw Score:';
+        const scalePrefix = isMl ? 'സ്കെയിൽ' : 'Scale';
+
         const card = document.createElement('div');
         card.className = `hero-score-card ${s.classification_level}`;
         card.innerHTML = `
-          <div class="hero-score-scale">Scale ${s.scale_code}</div>
-          <div class="hero-score-title">${s.scale_name}</div>
+          <div class="hero-score-scale">${scalePrefix} ${s.scale_code}</div>
+          <div class="hero-score-title">${scaleName}</div>
           <div class="hero-score-val-row">
             <span class="hero-t-score">${s.t_score}</span>
             <span class="hero-score-unit">T</span>
           </div>
-          <div class="hero-score-raw">Raw Score: ${s.raw_score}</div>
+          <div class="hero-score-raw">${rawPrefix} ${s.raw_score}</div>
           <div class="hero-score-badge">
             <span class="badge-tier ${s.classification_level}" style="width: 100%; display: block; padding: 0.35rem 0.5rem; font-size: 0.8rem;">
-              ${s.classification}
+              ${classifText}
             </span>
           </div>
         `;
@@ -455,25 +717,30 @@
       });
     }
 
-    // 4. Subscale Scores Table with Large T-Score Display (Percentile omitted from clinical report)
+    // 4. Subscale Scores Table with Large T-Score Display
     elements.subscaleTableBody.innerHTML = '';
     result.scores.forEach(s => {
+      const scaleName = (isMl && window.CAARS_I18N)
+        ? (window.CAARS_I18N.DICTIONARY.ml.scales[s.scale_code] || s.scale_name)
+        : s.scale_name;
+      const classifText = (isMl && window.CAARS_I18N)
+        ? (window.CAARS_I18N.DICTIONARY.ml.classifications[s.classification_level] || s.classification)
+        : s.classification;
+
       const row = document.createElement('tr');
       row.innerHTML = `
         <td style="font-weight: 700; font-size: 1rem; color: var(--color-primary-text);">${s.scale_code}</td>
-        <td><strong>${s.scale_name}</strong></td>
+        <td><strong>${scaleName}</strong></td>
         <td style="text-align: center; color: var(--color-text-secondary); font-size: 0.95rem;">${s.raw_score}</td>
         <td class="t-score-cell">${s.t_score}</td>
         <td style="text-align: center;">
           <span class="badge-tier ${s.classification_level}">
-            ${s.classification}
+            ${classifText}
           </span>
         </td>
       `;
       elements.subscaleTableBody.appendChild(row);
     });
-
-    showStage(elements.stageResults);
   }
 
   /* ==========================================================================
@@ -627,6 +894,14 @@
      10. Event Listeners Initializer
      ========================================================================== */
   function initEventListeners() {
+    // Language Toggle Switch
+    if (elements.btnLangEn) {
+      elements.btnLangEn.addEventListener('click', () => setLanguage('en'));
+    }
+    if (elements.btnLangMl) {
+      elements.btnLangMl.addEventListener('click', () => setLanguage('ml'));
+    }
+
     // Theme toggle
     elements.btnThemeToggle.addEventListener('click', toggleTheme);
 
@@ -684,6 +959,7 @@
 
   // Self-initialization
   initTheme();
+  initLanguage();
   initEventListeners();
 
 })();
